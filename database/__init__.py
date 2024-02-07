@@ -30,8 +30,8 @@ from database.db_functions import *
 #     "rfid": "666"
 # }
 #
-# if __name__ == '__main__':
-    # db.create_tables()
+if __name__ == '__main__':
+    db.create_tables()
     #   db.add_device(dev)
     #   db.edit_device(dev2)
     # db.remove_device('2')

@@ -1,0 +1,13 @@
+{% extends 'template.html' %}
+
+{% block title %}Urządzenia{% endblock %}
+
+{% block content %}
+    <h3>Urządzenia</h3>
+    <button type="button" class="add-btn">Dodaj urządzenie</button>
+
+    {% for item in data %}
+        {% set device_data = item %}
+        {% include 'device_container.html' %}
+    {% endfor %}
+{% endblock %}

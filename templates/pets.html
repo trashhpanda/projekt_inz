@@ -1,0 +1,13 @@
+{% extends 'template.html' %}
+
+{% block title %}Zwierzęta{% endblock %}
+
+{% block content %}
+    <h3>Zwierzęta</h3>
+    <button type="button" class="add-btn">Dodaj zwierzę</button>
+
+    {% for item in data %}
+        {% set pet_data = item %}
+        {% include 'pet_container.html' %}
+    {% endfor %}
+{% endblock %}

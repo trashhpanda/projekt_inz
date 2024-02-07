@@ -7,8 +7,12 @@ def connect():
     """
     Connects to database.
     """
+    here = os.path.dirname(os.path.abspath(__file__))
+
+    database = os.path.join(here, "database.db")
+
     try:
-        conn = sqlite3.connect("database.db")
+        conn = sqlite3.connect(database)
         print("connected")
         cur = conn.cursor()
         return conn, cur
@@ -110,6 +114,64 @@ def delete_record_by_id(table_name, record_id):
         print(e)
 
     commit_close(conn)
+
+
+get_queries = {
+    "devices": """
+    SELECT
+        devices.id,
+        devices.name,
+        devices.description,
+        JSON_GROUP_ARRAY(JSON_OBJECT('id', pets.id, 'name', pets.name)) AS pets
+    FROM devices
+    LEFT JOIN access ON devices.id = access.device_id
+    INNER JOIN pets ON access.pet_id = pets.id
+    GROUP BY devices.id;
+    """,
+    "pets": """
+    SELECT
+        pets.id AS pet_id,
+        pets.name AS pet_name,
+        JSON_GROUP_ARRAY(JSON_OBJECT('id', devices.id, 'name', devices.name)) AS devices
+    FROM pets
+    LEFT JOIN access ON pets.id = access.pet_id
+    INNER JOIN devices ON access.device_id = devices.id
+    GROUP BY pets.id;
+    """,
+    "history": """
+    SELECT
+        datetime,
+        pets.name AS pet,
+        devices.name AS device,
+        event
+    FROM history
+    LEFT JOIN pets ON pets.id = history.pet_id
+    LEFT JOIN devices ON history.device_id = devices.id;
+    """,
+}
+
+
+def get_records_special(q):
+    """
+
+    """
+    query = get_queries[q]
+
+    conn, cur = connect()
+
+    records = []
+
+    try:
+        cur.execute(query)
+        columns = [column[0] for column in cur.description]
+        rows = cur.fetchall()
+        records = [dict(zip(columns, row)) for row in rows]
+    except sqlite3.Error as e:
+        print(e)
+
+    commit_close(conn)
+
+    return records if records else None
 
 
 def add_device(device_dict):

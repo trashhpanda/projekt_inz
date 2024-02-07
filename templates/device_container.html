@@ -1,0 +1,12 @@
+<div class="device">
+    <h4 class="dev-name">{{ device_data.name }}</h4>
+    <button type="button" class="edit-btn">Edytuj</button>
+    <p class="dev-desc">{{ device_data.description }}</p>
+    <h5>Dostęp do urządzenia:</h5>
+    <button type="button" class="edit-btn">Dodaj</button>
+    <ul>
+        {% for key, value in device_data.pets.items() %}
+            <li>{{ key }} {{ value }} <button type="submit" class="remove-access-btn">Usuń dostęp</button> </li>
+        {% endfor %}
+    </ul>
+</div>

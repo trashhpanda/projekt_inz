@@ -1,0 +1,12 @@
+
+{% extends 'template.html' %}
+
+{% block title %}Historia{% endblock %}
+
+{% block content %}
+    <h3>Historia</h3>
+    {% for item in data %}
+        {% set device_data = item %}
+        {% include 'device_container.html' %}
+    {% endfor %}
+{% endblock %}

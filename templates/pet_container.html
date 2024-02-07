@@ -1,0 +1,11 @@
+<div class="pet">
+    <h4 class="pet-name">{{ pet_data.pet_name }}</h4>
+    <button type="button" class="edit-btn">Edytuj</button>
+    <h5>Dostęp do urządzeń:</h5>
+    <button type="button" class="edit-btn">Dodaj</button>
+    <ul>
+        {% for key, value in pet_data.devices.items() %}
+            <li>{{ key }} {{ value }} <button type="submit" class="remove-access-btn">Usuń dostęp</button> </li>
+        {% endfor %}
+    </ul>
+</div>
