@@ -38,7 +38,6 @@ def create_tables():
         '''
         CREATE TABLE IF NOT EXISTS devices (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            mac TEXT NOT NULL UNIQUE,
             name TEXT NOT NULL UNIQUE,
             description TEXT
         );
@@ -125,17 +124,18 @@ get_queries = {
         JSON_GROUP_ARRAY(JSON_OBJECT('id', pets.id, 'name', pets.name)) AS pets
     FROM devices
     LEFT JOIN access ON devices.id = access.device_id
-    INNER JOIN pets ON access.pet_id = pets.id
+    LEFT JOIN pets ON access.pet_id = pets.id
     GROUP BY devices.id;
     """,
     "pets": """
     SELECT
         pets.id AS pet_id,
         pets.name AS pet_name,
+        pets.photo_filename AS pet_photo,
         JSON_GROUP_ARRAY(JSON_OBJECT('id', devices.id, 'name', devices.name)) AS devices
     FROM pets
     LEFT JOIN access ON pets.id = access.pet_id
-    INNER JOIN devices ON access.device_id = devices.id
+    LEFT JOIN devices ON access.device_id = devices.id
     GROUP BY pets.id;
     """,
     "history": """
@@ -146,7 +146,8 @@ get_queries = {
         event
     FROM history
     LEFT JOIN pets ON pets.id = history.pet_id
-    LEFT JOIN devices ON history.device_id = devices.id;
+    LEFT JOIN devices ON history.device_id = devices.id
+    ORDER BY datetime DESC;
     """,
 }
 
@@ -178,18 +179,17 @@ def add_device(device_dict):
     """
     Adds a new device to the database with unique name and mac address.
     """
-    mac = device_dict["mac"]
     name = device_dict["name"]
     description = device_dict["description"]
 
-    query = 'INSERT INTO devices (mac, name, description) VALUES (?, ?, ?);'
+    query = 'INSERT INTO devices (name, description) VALUES (?, ?);'
 
     conn, cur = connect()
 
     try:
-        cur.execute(query, (mac, name, description))
-    except sqlite3.IntegrityError as e:
-        print("Error: ", e)
+        cur.execute(query, (name, description))
+    except Exception as e:
+        print("Exception: ", e)
 
     commit_close(conn)
 
@@ -270,6 +270,30 @@ def change_pet_rfid(pet_dict):
     commit_close(conn)
 
 
+def get_pet_id(pet_rfid):
+    """
+    Get record id for a pet by their rfid tag id.
+    """
+
+    conn, cur = connect()
+
+    query = 'SELECT id FROM pets WHERE rfid = ?;'
+
+    pet = None
+
+    print(pet_rfid)
+    try:
+        cur.execute(query, (pet_rfid, ))
+        pet = cur.fetchone()
+        pet = pet[0] if pet else None
+    except sqlite3.Error as e:
+        print(e)
+
+    commit_close(conn)
+
+    return pet
+
+
 # todo sprawdzić czy rekordy z danym id istnieją w tabelach pets i devices
 def add_access(pet_id, device_id):
     """
@@ -292,6 +316,110 @@ def add_access(pet_id, device_id):
             print("Error: ", e)
 
     commit_close(conn)
+
+
+def remove_access(pet_id, device_id):
+    """
+    Remove access to a device for a pet.
+    """
+
+    conn, cur = connect()
+
+    query = 'DELETE FROM access WHERE pet_id=? AND device_id=?;'
+
+    try:
+        cur.execute(query, (pet_id, device_id))
+    except sqlite3.IntegrityError as e:
+        print("Error: ", e)
+
+    commit_close(conn)
+
+
+def get_access(device_id):
+    """
+    Get a list of rfid tags with access to a specified device.
+    """
+
+    conn, cur = connect()
+
+    query = 'SELECT pets.rfid AS rfid FROM pets LEFT JOIN access a on pets.id = a.pet_id WHERE a.device_id = ?;'
+
+    rows = None
+
+    try:
+        cur.execute(query, device_id)
+        rows = cur.fetchall()
+        rows = [str(row[0]) for row in rows]
+    except sqlite3.Error as e:
+        print(e)
+
+    commit_close(conn)
+
+    return rows if rows else None
+
+
+def get_pet_names(device_id):
+    """
+    Names and ids of pets without access to a device.
+    """
+    conn, cur = connect()
+
+    query = """
+        SELECT
+            pets.id,
+            pets.name
+        FROM pets
+        WHERE pets.id NOT IN (
+            SELECT DISTINCT pets.id
+            FROM pets
+            JOIN access ON pets.id = access.pet_id
+            WHERE access.device_id = ?
+        );
+        """
+
+    rows = None
+
+    try:
+        cur.execute(query, device_id)
+        rows = cur.fetchall()
+    except sqlite3.Error as e:
+        print(e)
+
+    commit_close(conn)
+
+    return rows if rows else None
+
+
+def get_device_names(pet_id):
+    """
+    Names and ids of devices a pet doesn't have access to.
+    """
+    conn, cur = connect()
+
+    query = """
+        SELECT
+            devices.id,
+            devices.name
+        FROM devices
+        WHERE devices.id NOT IN (
+            SELECT DISTINCT devices.id
+            FROM devices
+            LEFT JOIN access ON devices.id = access.device_id
+            WHERE access.pet_id = ?
+        );
+        """
+
+    rows = None
+
+    try:
+        cur.execute(query, pet_id)
+        rows = cur.fetchall()
+    except sqlite3.Error as e:
+        print(e)
+
+    commit_close(conn)
+
+    return rows if rows else None
 
 
 # todo tutaj też sprawdzenie czy te rekordy istnieją w pets i devices

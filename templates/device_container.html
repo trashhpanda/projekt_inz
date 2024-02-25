@@ -1,12 +1,28 @@
 <div class="device">
     <h4 class="dev-name">{{ device_data.name }}</h4>
-    <button type="button" class="edit-btn">Edytuj</button>
+
+    <div class="device-status">...</div>
+
+    <button type="button" id="open-btn" style="display: none;">Otwórz</button>
+    <button type="button" id="close-btn" style="display: none;">Zamknij</button>
+
+
     <p class="dev-desc">{{ device_data.description }}</p>
     <h5>Dostęp do urządzenia:</h5>
-    <button type="button" class="edit-btn">Dodaj</button>
+    <button type="button" class="add-acc-btn" value="{{ device_data.id }}">Dodaj</button>
+
+    <form id="dev_acc_form_{{ device_data.id }}" method="POST" enctype="multipart/form-data" style="display: none;">
+        <label for="acc_pet_picker_{{ device_data.id }}">Wybierz zwierzę:</label>
+        <select name="acc_pet_picker" id="acc_pet_picker_{{ device_data.id }}"></select>
+
+        <input type="submit" id="dev_acc_submit_{{ device_data.id }}" value="Przydziel dostęp">
+    </form>
+
     <ul>
         {% for key, value in device_data.pets.items() %}
-            <li>{{ key }} {{ value }} <button type="submit" class="remove-access-btn">Usuń dostęp</button> </li>
+            {% if key != 'None' %}
+                <li>{{ value }} <button type="button" class="rm-acc-btn" value="{{ key }}/{{ device_data.id }}">Usuń dostęp</button> </li>
+            {% endif %}
         {% endfor %}
     </ul>
 </div>

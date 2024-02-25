@@ -3,9 +3,24 @@
 {% block title %}Dodaj zwierzę{% endblock %}
 
 {% block content %}
-    <form method="post">
+    <form id="pet-form" method="POST" enctype="multipart/form-data">
         <label for="pet-name">Imię:</label>
         <input type="text" id="pet-name" name="pet-name">
-
+        <br>
+        <label for="pet-picture">Zdjęcie</label>
+        <input type="file" id="pet-picture" name="pet-picture">
+        <br>
+        <img id="pet-img" src="#" alt="Zdjęcie" style="display: none; max-width: 200px; max-height: 200px;">
+        <br>
+        <input type="button" value="Skanuj tag RFID" id="pet-btn" name="pet-btn">
+        <input type="hidden" id="pet-rfid" name="pet-rfid">
+        <br>
+        <div id="pet-tag-info"></div>
+        <br>
+        <input type="submit" id="pet-submit" value="Zapisz">
     </form>
+{% endblock %}
+
+{% block script %}
+    {{ url_for('static', filename='js/pet_form.js') }}
 {% endblock %}

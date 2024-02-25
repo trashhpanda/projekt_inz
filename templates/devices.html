@@ -4,10 +4,16 @@
 
 {% block content %}
     <h3>Urządzenia</h3>
-    <button type="button" class="add-btn">Dodaj urządzenie</button>
+    <button type="button"  onclick="location.href='{{ url_for('add_device') }}';" class="add-btn">Dodaj urządzenie</button>
 
     {% for item in data %}
         {% set device_data = item %}
         {% include 'device_container.html' %}
     {% endfor %}
 {% endblock %}
+
+{% block script %}
+    {{ url_for('static', filename='js/devices.js') }}
+{% endblock %}
+
+

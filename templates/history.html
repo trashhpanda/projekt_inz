@@ -5,8 +5,25 @@
 
 {% block content %}
     <h3>Historia</h3>
-    {% for item in data %}
-        {% set device_data = item %}
-        {% include 'device_container.html' %}
-    {% endfor %}
+
+    {% if data %}
+        <table>
+            <tr>
+                <th>Data i czas</th>
+                <th>Zwierzę</th>
+                <th>Urządzenie</th>
+                <th>Zdarzenie</th>
+            </tr>
+            {% for item in data %}
+                <tr>
+                    <td>{{ item['datetime'] }}</td>
+                    <td>{{ item['pet'] if item['pet'] else 'APP' }}</td>
+                    <td>{{ item['device'] }}</td>
+                    <td>{{ item['event'] }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>Brak zdarzeń do wyświetlenia.</p>
+    {% endif %}
 {% endblock %}

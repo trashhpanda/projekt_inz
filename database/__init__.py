@@ -1,44 +1,50 @@
 import database.db_functions as db
 from database.db_functions import *
-#
-# dev = {
-#     "mac": "666454",
-#     "name": "eeee",
-#     "description": "csdc"
-# }
-#
-# dev2 = {
-#     "id": "3",
-#     "name": "yyyy",
-#     "description": "csdc"
-# }
-#
-# pet = {
-#     "rfid": "586756",
-#     "name": "kot",
-#     "photo": "newton.jpeg"
-# }
-#
-# pet2 = {
-#     "id": "3",
-#     "name": "Newton",
-#     "photo": "newton.jpeg"
-# }
-#
-# pet3 = {
-#     "id": "1",
-#     "rfid": "666"
-# }
-#
+
+dev = {
+    "mac": "67674535",
+    "name": "d2",
+    "description": "hjhdgfdf"
+}
+
+dev2 = {
+    "id": "3",
+    "name": "yyyy",
+    "description": "csdc"
+}
+
+pet = {
+    "rfid": "3333",
+    "name": "adf",
+    "photo": "marian.jpeg"
+}
+
+pet2 = {
+    "id": "3",
+    "name": "Newton",
+    "photo": "newton.jpeg"
+}
+
+pet3 = {
+    "id": "1",
+    "rfid": "666"
+}
+
+marian = {
+    "rfid": "909121514446",
+    "name": "Marian",
+    "photo": "Marian_2024-02-10_2046.jpeg"
+}
+
 if __name__ == '__main__':
-    db.create_tables()
-    #   db.add_device(dev)
+#     db.create_tables()
+#     db.add_device(dev)
     #   db.edit_device(dev2)
     # db.remove_device('2')
     # devices = db.get_devices()
     # for device in devices:
     #     print(device)
-    # db.add_pet(pet)
+    db.add_pet(marian)
     # db.edit_pet(pet2)
     # db.remove_pet('4')
     # db.change_pet_rfid(pet3)
@@ -46,12 +52,12 @@ if __name__ == '__main__':
     # pets = db.get_records('pets')
     # for pet in pets:
     #     print(pet)
-    # db.add_access(3, 7)
+    # db.add_access(2, 1)
     # db.delete_record_by_id('access', '3')
     # acc = db.get_records('access')
     # for a in acc:
     #     print(a)
-    # db.add_event(1, 2, 'OPEN')
+    # db.add_event(1, 1, 'DENIED')
     # history = db.get_records('history')
     # for h in history:
     #     print(h)

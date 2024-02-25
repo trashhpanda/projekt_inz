@@ -1,0 +1,15 @@
+{% extends 'template.html' %}
+
+{% block title %}Dodaj urządzenie{% endblock %}
+
+{% block content %}
+    <form id="device-form" method="POST" enctype="multipart/form-data">
+        <label for="device-name">Nazwa:</label>
+        <input type="text" id="device-name" name="device-name">
+        <br>
+        <label for="device-desc">Opis:</label>
+        <input type="text" id="device-desc" name="device-desc">
+        <br>
+        <input type="submit" id="device-submit" value="Zapisz">
+    </form>
+{% endblock %}
